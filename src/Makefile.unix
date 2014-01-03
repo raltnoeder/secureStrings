@@ -1,0 +1,27 @@
+CC=gcc
+CFLAGS=-std=c99 -O2 -Wall -Werror -pedantic-errors -fstack-protector-all -I .
+
+all: libsecurestr libsecurestr_conv libtest
+
+libsecurestr: libsecurestr.so securestr.o
+
+libsecurestr_conv: libsecurestr_conv.so securestr_conv.o
+
+libsecurestr.so:
+	$(CC) -fPIC -shared $(CFLAGS) -o libsecurestr.so securestr.c
+
+libsecurestr_conv.so:
+	$(CC) -fPIC -shared $(CFLAGS) -o libsecurestr_conv.so securestr_conv.c
+
+libtest: libtest.o libsecurestr libsecurestr_conv
+	$(CC) $(CFLAGS) -o libtest libtest.o libsecurestr.so libsecurestr_conv.so
+
+distclean: clean
+	rm -f libtest securestr.o securestr_conv.o libsecurestr.so libsecurestr_conv.so
+
+clean:
+	rm -f libtest.o
+
+static-clean:
+	rm -f securestr.o securestr_conv.o
+
