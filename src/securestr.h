@@ -1,8 +1,8 @@
 /**
  * secureStrings library
- * version 0.50-alpha (2013-10-14_001)
+ * version 0.51-alpha (2014-02-26_001)
  *
- * Copyright (C) 2010, 2013 Robert ALTNOEDER
+ * Copyright (C) 2010, 2014 Robert ALTNOEDER
  *
  * Redistribution and use in source and binary forms,
  * with or without modification, are permitted provided that
@@ -47,16 +47,16 @@
  * size_t is a system datatype. size_t MUST be unsigned.
  */
 #ifdef SIZE_MAX
-    #define SSTR_SIZE_T_MAX ( ((size_t) -1) < SIZE_MAX ? ((size_t) -1) : SIZE_MAX )
+    #define SSTR_SIZE_T_MAX ((~((size_t) 0)) < SIZE_MAX ? (~((size_t) 0)) : SIZE_MAX)
 #else
-    #define SSTR_SIZE_T_MAX ((size_t) -1)
+    #define SSTR_SIZE_T_MAX (~((size_t) 0))
 #endif /* SIZE_MAX */
 
 /**
  * SSTR_RCAP_MAX is the maximum number of char elements in an array
  */
-#define SSTR_RCAP_MAX ( (size_t) ( (((size_t) -1) - 127) < SSTR_SIZE_T_MAX ? \
-    (((size_t) -1) - 127) / sizeof(char) : SSTR_SIZE_T_MAX / sizeof(char) ) )
+#define SSTR_RCAP_MAX ((size_t) ((SSTR_SIZE_T_MAX - 127) < SSTR_SIZE_T_MAX ? \
+    (SSTR_SIZE_T_MAX - 127) : SSTR_SIZE_T_MAX))
 
 /**
  * SSTR_CAP_MAX is the maximum number of char elements
@@ -64,7 +64,7 @@
  *
  * SSTR_CAP_MAX is (SSTR_RCAP_MAX - 1)
  */
-#define SSTR_CAP_MAX ( SSTR_RCAP_MAX - 1 )
+#define SSTR_CAP_MAX ((size_t) (SSTR_RCAP_MAX - 1))
 
 /**
  * Define pos_t (position type), which is used to identify the

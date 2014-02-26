@@ -1,10 +1,10 @@
 /**
  * secureStrings library
- * version 0.50-alpha (2013-10-14_001)
+ * version 0.51-alpha (2014-02-26_001)
  *
  * secureStrings conversion extensions
  *
- * Copyright (C) 2010, 2013 Robert ALTNOEDER
+ * Copyright (C) 2010, 2014 Robert ALTNOEDER
  *
  * Redistribution and use in source and binary forms,
  * with or without modification, are permitted provided that
@@ -39,9 +39,13 @@
 #include <stdlib.h>
 #include <securestr.h>
 
+/**
+ * sizeof(text) is the length of a text including its
+ * trailing null byte
+ */
 #define SSTRING(text) ((sstring *) &((sstring) { text, \
-        (sizeof(text) / sizeof(char) - 1), \
-        (sizeof(text) / sizeof(char) - 1) }))
+        (sizeof(text) - 1), \
+        (sizeof(text) - 1) }))
 
 sstr_rc sstr_cpycstr(
     const char *,

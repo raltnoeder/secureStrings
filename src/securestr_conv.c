@@ -1,10 +1,10 @@
 /**
  * secureStrings library
- * version 0.50-alpha (2013-10-14_001)
+ * version 0.51-alpha (2014-02-26_001)
  *
  * secureStrings conversion extensions
  *
- * Copyright (C) 2010, 2013 Robert ALTNOEDER
+ * Copyright (C) 2010, 2014 Robert ALTNOEDER
  *
  * Redistribution and use in source and binary forms,
  * with or without modification, are permitted provided that
@@ -60,7 +60,7 @@ sstr_rc sstr_cpycstr(
             /* update destination secureString length */
             dst_str->len = cstr_len;
             /* terminate destination secureString with a null-character */
-            dst_str->chars[dst_str->len] = ((char) 0);
+            dst_str->chars[dst_str->len] = '\0';
 
             return SSTR_PASS;
         }
@@ -97,7 +97,7 @@ sstr_rc sstr_appdcstr(
             /* update destination secureString length */
             dst_str->len += cstr_len;
             /* terminate destination secureString with a null-character */
-            dst_str->chars[dst_str->len] = ((char) 0);
+            dst_str->chars[dst_str->len] = '\0';
 
             return SSTR_PASS;
         }
@@ -117,7 +117,7 @@ sstr_rc sstr_cmpcstr(
 )
 {
     register sstr_pos sstr_idx;
-    
+
     if (src_str != NULL && pat_str != NULL)
     {
         if (cstr_len == src_str->len)
@@ -131,10 +131,10 @@ sstr_rc sstr_cmpcstr(
                     return SSTR_FALSE;
                 }
             }
-            
-            return SSTR_TRUE;        
+
+            return SSTR_TRUE;
         }
     }
-    
+
     return SSTR_FAIL;
 }
