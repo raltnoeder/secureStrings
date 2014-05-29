@@ -1,6 +1,6 @@
 /**
  * secureStrings library
- * version 0.51-alpha (2014-02-26_001)
+ * version 0.51-alpha (2014-05-29_001)
  *
  * Copyright (C) 2010, 2014 Robert ALTNOEDER
  *
@@ -72,7 +72,8 @@
  */
 typedef size_t sstr_pos;
 
-typedef struct sstr_struct {
+typedef struct sstr_struct
+{
     char     *chars;
     size_t   cap;
     sstr_pos len;

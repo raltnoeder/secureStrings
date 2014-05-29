@@ -1,6 +1,6 @@
 /**
  * secureStrings library
- * version 0.51-alpha (2014-02-26_001)
+ * version 0.51-alpha (2014-05-29_001)
  *
  * Copyright (C) 2010, 2014 Robert ALTNOEDER
  *
@@ -33,7 +33,7 @@
 #include <stdlib.h>
 #include <securestr.h>
 
-#define sstr_version_cstr "0.51-alpha (2014-02-26_001)"
+#define sstr_version_cstr "0.51-alpha (2014-05-29_001)"
 
 const sstring sstr_version_struct = {
     /* chars = string buffer */
@@ -94,7 +94,9 @@ sstring *sstr_alloc(
                 dst_str->cap      = sstr_cap;
                 dst_str->len      = 0;
                 dst_str->chars[0] = '\0';
-            } else {
+            }
+            else
+            {
                 free(sstr_chars);
                 sstr_chars = NULL;
             }
@@ -632,7 +634,9 @@ sstr_pos sstr_indexof(
                              * did not match */
                             pat_idx = 0;
                             break;
-                        } else {
+                        }
+                        else
+                        {
                             ++src_off;
                             ++pat_idx;
                         }

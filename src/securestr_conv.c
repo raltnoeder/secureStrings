@@ -124,9 +124,7 @@ sstr_rc sstr_cmpcstr(
         {
             for (sstr_idx = 0; sstr_idx < cstr_len; ++sstr_idx)
             {
-                if (
-                    src_str->chars[sstr_idx] != (char) pat_str[sstr_idx]
-                )
+                if (src_str->chars[sstr_idx] != (char) pat_str[sstr_idx])
                 {
                     return SSTR_FALSE;
                 }
