@@ -1,6 +1,6 @@
 /**
  * secureStrings library
- * version 0.51-alpha (2014-05-29_001)
+ * version 0.51-alpha (2014-07-02_001)
  *
  * Copyright (C) 2010, 2014 Robert ALTNOEDER
  *
@@ -33,7 +33,7 @@
 #include <stdlib.h>
 #include <securestr.h>
 
-#define sstr_version_cstr "0.51-alpha (2014-05-29_001)"
+#define sstr_version_cstr "0.51-alpha (2014-07-02_001)"
 
 const sstring sstr_version_struct = {
     /* chars = string buffer */
@@ -47,7 +47,6 @@ const sstring sstr_version_struct = {
 };
 const sstring *sstr_version = &sstr_version_struct;
 
-#ifndef _MAC_OS_X
 /**
  * valid values of the sstr_rc_t datatype
  */
@@ -55,14 +54,11 @@ const sstr_rc SSTR_PASS  =    (sstr_rc) 0;
 const sstr_rc SSTR_FAIL  = (~((sstr_rc) 0));
 const sstr_rc SSTR_FALSE =    (sstr_rc) 0;
 const sstr_rc SSTR_TRUE  =    (sstr_rc) 1;
-#endif
 
-#ifndef _MAC_OS_X
 /**
  * SSTR_NPOS is the value returned to indicate an invalid position in an array
  */
 const sstr_pos SSTR_NPOS = (~((sstr_pos) 0));
-#endif
 
 #ifndef _SSTR_NO_DYNMEM
 /**

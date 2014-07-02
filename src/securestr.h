@@ -1,6 +1,6 @@
 /**
  * secureStrings library
- * version 0.51-alpha (2014-05-29_001)
+ * version 0.51-alpha (2014-07-02_001)
  *
  * Copyright (C) 2010, 2014 Robert ALTNOEDER
  *
@@ -85,27 +85,14 @@ typedef struct sstr_struct
 typedef   unsigned int   sstr_rc;
 
 /* valid values of the sstr_rc datatype */
-#ifndef _MAC_OS_X
-const sstr_rc SSTR_PASS;
-const sstr_rc SSTR_FAIL;
-const sstr_rc SSTR_FALSE;
-const sstr_rc SSTR_TRUE;
-#endif
-#ifdef _MAC_OS_X
-#define SSTR_PASS    ((sstr_rc) 0)
-#define SSTR_FAIL  (~((sstr_rc) 0))
-#define SSTR_FALSE   ((sstr_rc) 0)
-#define SSTR_TRUE    ((sstr_rc) 1)
-#endif
+extern const sstr_rc SSTR_PASS;
+extern const sstr_rc SSTR_FAIL;
+extern const sstr_rc SSTR_FALSE;
+extern const sstr_rc SSTR_TRUE;
 
 /* SSTR_NPOS is the value returned to indicate
  * an invalid position in an array */
-#ifndef _MAC_OS_X
-const sstr_pos SSTR_NPOS;
-#endif
-#ifdef _MAC_OS_X
-#define SSTR_NPOS (~((sstr_pos) 0))
-#endif
+extern const sstr_pos SSTR_NPOS;
 
 sstring *sstr_alloc(
     size_t
