@@ -1,6 +1,6 @@
 /**
  * secureStrings library
- * version 0.51-alpha (2014-07-02_001)
+ * version 0.52-beta (2014-07-02_001)
  *
  * Copyright (C) 2010, 2014 Robert ALTNOEDER
  *
@@ -33,9 +33,10 @@
 #include <stdlib.h>
 #include <securestr.h>
 
-#define sstr_version_cstr "0.51-alpha (2014-07-02_001)"
+#define sstr_version_cstr "0.52-beta (2014-07-02_001)"
 
-const sstring sstr_version_struct = {
+const sstring sstr_version_struct =
+{
     /* chars = string buffer */
     sstr_version_cstr,
     /* cap   = capacity of the string

@@ -1,6 +1,6 @@
 /**
  * secureStrings library
- * version 0.51-alpha (2014-07-02_001)
+ * version 0.52-beta (2014-07-02_001)
  *
  * Copyright (C) 2010, 2014 Robert ALTNOEDER
  *
@@ -77,7 +77,8 @@ typedef struct sstr_struct
     char     *chars;
     size_t   cap;
     sstr_pos len;
-} sstring;
+}
+sstring;
 
 /**
  * datatype for return values of secureStrings functions

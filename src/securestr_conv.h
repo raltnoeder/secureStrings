@@ -1,6 +1,6 @@
 /**
  * secureStrings library
- * version 0.51-alpha (2014-02-26_001)
+ * version 0.52-beta (2014-07-02_001)
  *
  * secureStrings conversion extensions
  *
