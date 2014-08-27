@@ -1,6 +1,6 @@
 /**
  * secureStrings library
- * version 0.52-beta (2014-07-02_001)
+ * version 0.53-beta (2014-08-27_001)
  *
  * secureStrings conversion extensions
  *
@@ -30,7 +30,6 @@
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-
 #ifndef _SECURESTR_CONV_H
 #define _SECURESTR_CONV_H
 
@@ -40,30 +39,42 @@
 #include <securestr.h>
 
 /**
- * sizeof(text) is the length of a text including its
+ * sizeof (text) is the length of a text including its
  * trailing null byte
  */
 #define SSTRING(text) ((sstring *) &((sstring) { text, \
-        (sizeof(text) - 1), \
-        (sizeof(text) - 1) }))
+        (sizeof (text) - 1), \
+        (sizeof (text) - 1) }))
 
+/**
+ * Copy a C string to a secureString (overwrite)
+ */
 sstr_rc sstr_cpycstr(
-    const char *,
-    sstring *,
-    size_t
+    const char  *src_cstr,
+    sstring     *dst_str,
+    size_t      cstr_len
 );
 
+
+/**
+ * Append a C string to a secureString
+ */
 sstr_rc sstr_appdcstr(
-    const char *,
-    sstring *,
-    size_t
+    const char *src_cstr,
+    sstring    *dst_str,
+    size_t     cstr_len
 );
 
+
+/**
+ * Compare a secureString with a C string
+ */
 sstr_rc sstr_cmpcstr(
-    sstring *,
-    const char *,
-    size_t
+    sstring    *src_str,
+    const char *pat_str,
+    size_t     cstr_len
 );
+
 
 #define sstrCpyCstr     sstr_cpycstr
 #define sstrAppdCstr    sstr_appdcstr

@@ -1,6 +1,6 @@
 /**
  * secureStrings library
- * version 0.52-beta (2014-07-02_001)
+ * version 0.53-beta (2014-08-27_001)
  *
  * Copyright (C) 2010, 2014 Robert ALTNOEDER
  *
@@ -67,7 +67,7 @@
 #define SSTR_CAP_MAX ((size_t) (SSTR_RCAP_MAX - 1))
 
 /**
- * Define pos_t (position type), which is used to identify the
+ * Define sstr_pos (position type), which is used to identify the
  * position of a character inside a secureString
  */
 typedef size_t sstr_pos;
@@ -83,7 +83,7 @@ sstring;
 /**
  * datatype for return values of secureStrings functions
  */
-typedef   unsigned int   sstr_rc;
+typedef unsigned int sstr_rc;
 
 /* valid values of the sstr_rc datatype */
 extern const sstr_rc SSTR_PASS;
@@ -95,100 +95,184 @@ extern const sstr_rc SSTR_TRUE;
  * an invalid position in an array */
 extern const sstr_pos SSTR_NPOS;
 
+
+#ifndef _SSTR_NO_DYNMEM
+/**
+ * Allocate a secureString
+ *
+ * sstr_cap is the number of char elements that will
+ * be available for string processing
+ */
 sstring *sstr_alloc(
-    size_t
+    size_t sstr_cap
 );
+#endif /* not _SSTR_NO_DYNMEM */
 
+
+#ifndef _SSTR_NO_DYNMEM
+/**
+ * Deallocate a secureString
+ */
 void sstr_dealloc(
-    sstring *
+    sstring *dst_str
 );
+#endif /* not _SSTR_NO_DYNMEM */
 
+
+/**
+ * Copy a string to another string (overwrite)
+ */
 sstr_rc sstr_cpy(
-    sstring *,
-    sstring *
+    sstring *src_str,
+    sstring *dst_str
 );
 
+
+/**
+ * Append a string to another string
+ */
 sstr_rc sstr_appd(
-    sstring *,
-    sstring *
+    sstring *src_str,
+    sstring *dst_str
 );
 
+
+/**
+ * Append a char to a string
+ */
 sstr_rc sstr_appdchar(
-    char,
-    sstring *
+    char    src_char,
+    sstring *dst_str
 );
 
-sstr_rc sstr_substr(
-    sstring *,
-    sstring *,
-    sstr_pos,
-    size_t
-);
 
-sstr_rc sstr_appdsubstr(
-    sstring *,
-    sstring *,
-    sstr_pos,
-    size_t
-);
-
-sstr_rc sstr_trunc(
-    sstring *,
-    size_t
-);
-
-sstr_rc sstr_cmp(
-    sstring *,
-    sstring *
-);
-
-sstr_rc sstr_startswith(
-    sstring *,
-    sstring *
-);
-
-sstr_rc sstr_endswith(
-    sstring *,
-    sstring *
-);
-
-sstr_pos sstr_indexof(
-    sstring *,
-    sstring *
-);
-
-sstr_rc sstr_getchar(
-    sstring *,
-    char *,
-    sstr_pos
-);
-
-sstr_rc sstr_setchar(
-    char,
-    sstring *,
-    sstr_pos
-);
-
-sstr_rc sstr_swap(
-    sstring *,
-    sstring *
-);
-
-sstr_rc sstr_clear(
-    sstring *
-);
-
-sstr_rc sstr_wipe(
-    sstring *
-);
-
+/**
+ * Query the length of a string
+ */
 size_t sstr_len(
-    sstring *
+    const sstring *src_str
 );
 
+
+/**
+ * Query the capacity of a string
+ */
 size_t sstr_cap(
-    sstring *
+    const sstring *src_str
 );
+
+
+/**
+ * Truncate a string to the specified length
+ */
+sstr_rc sstr_trunc(
+    sstring *dst_str,
+    size_t  sstr_len
+);
+
+
+/**
+ * Clear a string (reset its length to zero)
+ */
+sstr_rc sstr_clear(
+    sstring *dst_str
+);
+
+
+/**
+ * Clear a string by overwriting it with null characters
+ */
+sstr_rc sstr_wipe(
+    sstring *dst_str
+);
+
+
+/**
+ * Swap two strings
+ */
+sstr_rc sstr_swap(
+    sstring *swap1st,
+    sstring *swap2nd
+);
+
+
+/**
+ * Get a character from a specified position in the string
+ */
+sstr_rc sstr_getchar(
+    const sstring *src_str,
+    char          *dst_char,
+    sstr_pos      sstr_idx
+);
+
+
+/**
+ * Set a character at a specified position in a string
+ */
+sstr_rc sstr_setchar(
+    char     src_char,
+    sstring  *dst_str,
+    sstr_pos sstr_idx
+);
+
+
+/**
+ * Compare two strings
+ */
+sstr_rc sstr_cmp(
+    const sstring *src_str,
+    const sstring *pat_str
+);
+
+
+/**
+ * Compare the head part of two strings
+ */
+sstr_rc sstr_startswith(
+    const sstring *src_str,
+    const sstring *pat_str
+);
+
+
+/**
+ * Compare the tail part of two strings
+ */
+sstr_rc sstr_endswith(
+    const sstring *src_str,
+    const sstring *pat_str
+);
+
+
+/**
+ * Extract a substring from a string
+ */
+sstr_rc sstr_substr(
+    sstring  *src_str,
+    sstring  *dst_str,
+    sstr_pos start_pos,
+    size_t   substr_len
+);
+
+
+/**
+ * Extract a substring from a string and append it to another string
+ */
+sstr_rc sstr_appdsubstr(
+    sstring  *src_str,
+    sstring  *dst_str,
+    sstr_pos start_pos,
+    size_t   substr_len
+);
+
+
+/**
+ * Find a substring in another string
+ */
+sstr_pos sstr_indexof(
+    const sstring *src_str,
+    const sstring *pat_str
+);
+
 
 #define sString         sstring
 

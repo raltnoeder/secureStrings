@@ -1,6 +1,6 @@
 /**
  * secureStrings library
- * version 0.52-beta (2014-07-02_001)
+ * version 0.53-beta (2014-08-27_001)
  *
  * Copyright (C) 2010, 2014 Robert ALTNOEDER
  *
@@ -33,7 +33,7 @@
 #include <stdlib.h>
 #include <securestr.h>
 
-#define sstr_version_cstr "0.52-beta (2014-07-02_001)"
+#define sstr_version_cstr "0.53-beta (2014-08-27_001)"
 
 const sstring sstr_version_struct =
 {
@@ -41,10 +41,10 @@ const sstring sstr_version_struct =
     sstr_version_cstr,
     /* cap   = capacity of the string
      * length of (sstr_version_cstr + '\0') minus 1 */
-    (sizeof(sstr_version_cstr) - 1),
+    (sizeof (sstr_version_cstr) - 1),
     /* len   = length of the string: (len <= cap)
      * length of (sstr_version_cstr + '\0') minus 1 */
-    (sizeof(sstr_version_cstr) - 1)
+    (sizeof (sstr_version_cstr) - 1)
 };
 const sstring *sstr_version = &sstr_version_struct;
 
@@ -60,6 +60,7 @@ const sstr_rc SSTR_TRUE  =    (sstr_rc) 1;
  * SSTR_NPOS is the value returned to indicate an invalid position in an array
  */
 const sstr_pos SSTR_NPOS = (~((sstr_pos) 0));
+
 
 #ifndef _SSTR_NO_DYNMEM
 /**
@@ -80,10 +81,10 @@ sstring *sstr_alloc(
 
     if (sstr_cap <= SSTR_CAP_MAX)
     {
-        sstr_chars = malloc((size_t) (sstr_cap + 1));
+        sstr_chars = malloc(sstr_cap + 1);
         if (sstr_chars != NULL)
         {
-            dst_str = malloc((size_t) sizeof(sstring));
+            dst_str = malloc(sizeof (sstring));
 
             if (dst_str != NULL)
             {
@@ -227,7 +228,7 @@ sstr_rc sstr_appdchar(
  * Query the length of a string
  */
 size_t sstr_len(
-    sstring *src_str
+    const sstring *src_str
 )
 {
     if (src_str != NULL)
@@ -243,7 +244,7 @@ size_t sstr_len(
  * Query the capacity of a string
  */
 size_t sstr_cap(
-    sstring *src_str
+    const sstring *src_str
 )
 {
     if (src_str != NULL)
@@ -359,9 +360,9 @@ sstr_rc sstr_swap(
  * Get a character from a specified position in the string
  */
 sstr_rc sstr_getchar(
-    sstring  *src_str,
-    char     *dst_char,
-    sstr_pos sstr_idx
+    const sstring *src_str,
+    char          *dst_char,
+    sstr_pos      sstr_idx
 )
 {
     if (src_str != NULL && dst_char != NULL)
@@ -405,8 +406,8 @@ sstr_rc sstr_setchar(
  * Compare two strings
  */
 sstr_rc sstr_cmp(
-    sstring *src_str,
-    sstring *pat_str
+    const sstring *src_str,
+    const sstring *pat_str
 )
 {
     register sstr_pos sstr_idx;
@@ -437,8 +438,8 @@ sstr_rc sstr_cmp(
  * Compare the head part of two strings
  */
 sstr_rc sstr_startswith(
-    sstring *src_str,
-    sstring *pat_str
+    const sstring *src_str,
+    const sstring *pat_str
 )
 {
     register sstr_pos sstr_idx;
@@ -469,8 +470,8 @@ sstr_rc sstr_startswith(
  * Compare the tail part of two strings
  */
 sstr_rc sstr_endswith(
-    sstring *src_str,
-    sstring *pat_str
+    const sstring *src_str,
+    const sstring *pat_str
 )
 {
     register sstr_pos src_idx;
@@ -594,8 +595,8 @@ sstr_rc sstr_appdsubstr(
  * Find a substring in another string
  */
 sstr_pos sstr_indexof(
-    sstring *src_str,
-    sstring *pat_str
+    const sstring *src_str,
+    const sstring *pat_str
 )
 {
     register sstr_pos src_idx;

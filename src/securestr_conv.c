@@ -1,6 +1,6 @@
 /**
  * secureStrings library
- * version 0.52-beta (2014-07-02_001)
+ * version 0.53-beta (2014-08-27_001)
  *
  * secureStrings conversion extensions
  *
@@ -35,13 +35,14 @@
 #include <securestr.h>
 #include <securestr_conv.h>
 
+
 /**
  * Copy a C string to a secureString (overwrite)
  */
 sstr_rc sstr_cpycstr(
-    const char  *src_cstr,
-    sstring     *dst_str,
-    size_t      cstr_len
+    const char *src_cstr,
+    sstring    *dst_str,
+    size_t     cstr_len
 )
 {
     register sstr_pos sstr_idx;
@@ -74,9 +75,9 @@ sstr_rc sstr_cpycstr(
  * Append a C string to a secureString
  */
 sstr_rc sstr_appdcstr(
-    const char  *src_cstr,
-    sstring     *dst_str,
-    size_t      cstr_len
+    const char *src_cstr,
+    sstring    *dst_str,
+    size_t     cstr_len
 )
 {
     register sstr_pos src_idx;
@@ -111,9 +112,9 @@ sstr_rc sstr_appdcstr(
  * Compare a secureString with a C string
  */
 sstr_rc sstr_cmpcstr(
-    sstring     *src_str,
-    const char  *pat_str,
-    size_t      cstr_len
+    sstring    *src_str,
+    const char *pat_str,
+    size_t     cstr_len
 )
 {
     register sstr_pos sstr_idx;
