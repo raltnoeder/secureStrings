@@ -1,6 +1,6 @@
 /**
  * secureStrings library
- * version 0.53-beta (2014-08-27_001)
+ * version 0.54-beta (2014-10-25_001)
  *
  * secureStrings conversion extensions
  *
@@ -45,29 +45,29 @@ sstr_rc sstr_cpycstr(
     size_t     cstr_len
 )
 {
-    register sstr_pos sstr_idx;
+    sstr_rc sstr_status = SSTR_FAIL;
 
     if (src_cstr != NULL && dst_str != NULL)
     {
-        /* check whether the destination secureString has enough
-         * capacity to store the contents of the source C string */
+        // check whether the destination secureString has enough
+        // capacity to store the contents of the source C string
         if (dst_str->cap >= cstr_len)
         {
-            for (sstr_idx = 0; sstr_idx < cstr_len; ++sstr_idx)
+            for (sstr_pos sstr_idx = 0; sstr_idx < cstr_len; ++sstr_idx)
             {
-                dst_str->chars[sstr_idx] = (char) src_cstr[sstr_idx];
+                dst_str->chars[sstr_idx] = src_cstr[sstr_idx];
             }
 
-            /* update destination secureString length */
+            // update destination secureString length
             dst_str->len = cstr_len;
-            /* terminate destination secureString with a null-character */
+            // terminate destination secureString with a null-character
             dst_str->chars[dst_str->len] = '\0';
 
-            return SSTR_PASS;
+            sstr_status = SSTR_PASS;
         }
     }
 
-    return SSTR_FAIL;
+    return sstr_status;
 }
 
 
@@ -80,24 +80,27 @@ sstr_rc sstr_appdcstr(
     size_t     cstr_len
 )
 {
-    register sstr_pos src_idx;
-    register sstr_pos dst_idx;
-
     if (src_cstr != NULL && dst_str != NULL)
     {
-        /* check whether the destination secureString has enough
-         * capacity to get appended the contents of the source
-         * secureString */
-        if ( (dst_str->cap - dst_str->len) >= cstr_len )
+        // check whether the destination secureString has enough
+        // capacity to get appended the contents of the source
+        // secureString
+        if ((dst_str->cap - dst_str->len) >= cstr_len)
         {
-            for (src_idx = 0, dst_idx = dst_str->len; src_idx < cstr_len; ++src_idx, ++dst_idx)
             {
-                dst_str->chars[dst_idx] = (char) src_cstr[src_idx];
+                sstr_pos src_idx = 0;
+                sstr_pos dst_idx = dst_str->len;
+                while (src_idx < cstr_len)
+                {
+                    dst_str->chars[dst_idx] = src_cstr[src_idx];
+                    ++src_idx;
+                    ++dst_idx;
+                }
             }
 
-            /* update destination secureString length */
+            // update destination secureString length
             dst_str->len += cstr_len;
-            /* terminate destination secureString with a null-character */
+            // terminate destination secureString with a null-character
             dst_str->chars[dst_str->len] = '\0';
 
             return SSTR_PASS;
@@ -117,23 +120,32 @@ sstr_rc sstr_cmpcstr(
     size_t     cstr_len
 )
 {
-    register sstr_pos sstr_idx;
+    sstr_rc sstr_status = SSTR_FAIL;
 
     if (src_str != NULL && pat_str != NULL)
     {
         if (cstr_len == src_str->len)
         {
-            for (sstr_idx = 0; sstr_idx < cstr_len; ++sstr_idx)
+            sstr_pos sstr_idx = 0;
+            while (sstr_idx < cstr_len && src_str->chars[sstr_idx] == pat_str[sstr_idx])
             {
-                if (src_str->chars[sstr_idx] != (char) pat_str[sstr_idx])
-                {
-                    return SSTR_FALSE;
-                }
+                ++sstr_idx;
             }
 
-            return SSTR_TRUE;
+            if (sstr_idx < cstr_len)
+            {
+                sstr_status = SSTR_FALSE;
+            }
+            else
+            {
+                sstr_status = SSTR_TRUE;
+            }
+        }
+        else
+        {
+            sstr_status = SSTR_FALSE;
         }
     }
 
-    return SSTR_FAIL;
+    return sstr_status;
 }

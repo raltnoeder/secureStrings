@@ -1,6 +1,6 @@
 /**
  * secureStrings library
- * version 0.53-beta (2014-08-27_001)
+ * version 0.54-beta (2014-10-25_001)
  *
  * Copyright (C) 2010, 2014 Robert ALTNOEDER
  *
@@ -33,32 +33,35 @@
 #include <stdlib.h>
 #include <securestr.h>
 
-#define sstr_version_cstr "0.53-beta (2014-08-27_001)"
+#define sstr_version_cstr "0.54-beta (2014-10-25_001)"
 
 const sstring sstr_version_struct =
 {
-    /* chars = string buffer */
+    // chars = string buffer
     sstr_version_cstr,
-    /* cap   = capacity of the string
-     * length of (sstr_version_cstr + '\0') minus 1 */
+    // cap   = capacity of the string
+    // length of (sstr_version_cstr + '\0') minus 1
     (sizeof (sstr_version_cstr) - 1),
-    /* len   = length of the string: (len <= cap)
-     * length of (sstr_version_cstr + '\0') minus 1 */
+    // len   = length of the string: (len <= cap)
+    // length of (sstr_version_cstr + '\0') minus 1
     (sizeof (sstr_version_cstr) - 1)
 };
 const sstring *sstr_version = &sstr_version_struct;
 
-/**
- * valid values of the sstr_rc_t datatype
- */
+//
+// valid values of the sstr_rc_t datatype
+//
 const sstr_rc SSTR_PASS  =    (sstr_rc) 0;
 const sstr_rc SSTR_FAIL  = (~((sstr_rc) 0));
 const sstr_rc SSTR_FALSE =    (sstr_rc) 0;
 const sstr_rc SSTR_TRUE  =    (sstr_rc) 1;
 
-/**
- * SSTR_NPOS is the value returned to indicate an invalid position in an array
- */
+// SSTR_SIZE_FAIL is the value returned to indicate an invalid size
+const size_t  SSTR_SIZE_FAIL = (~((size_t) 0));
+
+//
+// SSTR_NPOS is the value returned to indicate an invalid position in an array
+//
 const sstr_pos SSTR_NPOS = (~((sstr_pos) 0));
 
 
@@ -73,19 +76,14 @@ sstring *sstr_alloc(
     size_t sstr_cap
 )
 {
-    char    *sstr_chars;
-    sstring *dst_str;
-
-    sstr_chars = NULL;
-    dst_str    = NULL;
+    sstring *dst_str = NULL;
 
     if (sstr_cap <= SSTR_CAP_MAX)
     {
-        sstr_chars = malloc(sstr_cap + 1);
+        char *sstr_chars = malloc(sstr_cap + 1);
         if (sstr_chars != NULL)
         {
             dst_str = malloc(sizeof (sstring));
-
             if (dst_str != NULL)
             {
                 dst_str->chars    = sstr_chars;
@@ -96,7 +94,6 @@ sstring *sstr_alloc(
             else
             {
                 free(sstr_chars);
-                sstr_chars = NULL;
             }
         }
     }
@@ -131,30 +128,30 @@ sstr_rc sstr_cpy(
     sstring *dst_str
 )
 {
-    register sstr_pos sstr_idx;
+    sstr_rc sstr_status = SSTR_FAIL;
 
     if (src_str != NULL && dst_str != NULL)
     {
-        /* check whether the destination secureString has enough
-         * capacity to store the contents of the source secureString */
+        // check whether the destination secureString has enough
+        // capacity to store the contents of the source secureString
         if (dst_str->cap >= src_str->len)
         {
-            /* copy secureString contents */
-            for (sstr_idx = 0; sstr_idx < src_str->len; ++sstr_idx)
+            // copy secureString contents
+            for (sstr_pos sstr_idx = 0; sstr_idx < src_str->len; ++sstr_idx)
             {
                 dst_str->chars[sstr_idx] = src_str->chars[sstr_idx];
             }
 
-            /* update destination secureString length */
+            // update destination secureString length
             dst_str->len = src_str->len;
-            /* terminate destination secureString with a null-character */
+            // terminate destination secureString with a null-character
             dst_str->chars[dst_str->len] = '\0';
 
-            return SSTR_PASS;
+            sstr_status = SSTR_PASS;
         }
     }
 
-    return SSTR_FAIL;
+    return sstr_status;
 }
 
 
@@ -166,32 +163,36 @@ sstr_rc sstr_appd(
     sstring *dst_str
 )
 {
-    register sstr_pos src_idx;
-    register sstr_pos dst_idx;
+    sstr_rc sstr_status = SSTR_FAIL;
 
     if (src_str != NULL && dst_str != NULL)
     {
-        /* check whether the destination secureString has enough
-         * capacity to get appended the contents of the source
-         * secureString */
+        // check whether the destination secureString has enough
+        // capacity to get appended the contents of the source
+        // secureString
         if ((dst_str->cap - dst_str->len) >= src_str->len)
         {
-            for (src_idx = 0, dst_idx = dst_str->len; src_idx < src_str->len;
-                ++src_idx, ++dst_idx)
             {
-                dst_str->chars[dst_idx] = src_str->chars[src_idx];
+                sstr_pos src_idx = 0;
+                sstr_pos dst_idx = dst_str->len;
+                while (src_idx < src_str->len)
+                {
+                    dst_str->chars[dst_idx] = src_str->chars[src_idx];
+                    ++src_idx;
+                    ++dst_idx;
+                }
             }
 
-            /* update destination secureString length */
+            // update destination secureString length
             dst_str->len += src_str->len;
-            /* terminate destination secureString with a null-character */
+            // terminate destination secureString with a null-character
             dst_str->chars[dst_str->len] = '\0';
 
-            return SSTR_PASS;
+            sstr_status = SSTR_PASS;
         }
     }
 
-    return SSTR_FAIL;
+    return sstr_status;
 }
 
 
@@ -203,24 +204,26 @@ sstr_rc sstr_appdchar(
     sstring *dst_str
 )
 {
+    sstr_rc sstr_status = SSTR_FAIL;
+
     if (dst_str != NULL)
     {
-        /* check whether the destination secureString has enough
-         * capacity for an additional character */
+        // check whether the destination secureString has enough
+        // capacity for an additional character
         if (dst_str->len < dst_str->cap)
         {
             dst_str->chars[dst_str->len] = src_char;
 
-            /* update destination secureString length */
+            // update destination secureString length
             ++(dst_str->len);
-            /* terminate destination secureString with a null-character */
+            // terminate destination secureString with a null-character
             dst_str->chars[dst_str->len] = '\0';
 
-            return SSTR_PASS;
+            sstr_status = SSTR_PASS;
         }
     }
 
-    return SSTR_FAIL;
+    return sstr_status;
 }
 
 
@@ -231,12 +234,14 @@ size_t sstr_len(
     const sstring *src_str
 )
 {
+    size_t sstr_result = SSTR_SIZE_FAIL;
+
     if (src_str != NULL)
     {
-        return src_str->len;
+        sstr_result = src_str->len;
     }
 
-    return SSTR_FAIL;
+    return sstr_result;
 }
 
 
@@ -247,12 +252,14 @@ size_t sstr_cap(
     const sstring *src_str
 )
 {
+    size_t sstr_result = SSTR_SIZE_FAIL;
+
     if (src_str != NULL)
     {
-        return src_str->cap;
+        sstr_result = src_str->cap;
     }
 
-    return SSTR_FAIL;
+    return sstr_result;
 }
 
 
@@ -264,6 +271,8 @@ sstr_rc sstr_trunc(
     size_t  sstr_len
 )
 {
+    sstr_rc sstr_status = SSTR_FAIL;
+
     if (dst_str != NULL)
     {
         if (sstr_len <= dst_str->len)
@@ -271,11 +280,11 @@ sstr_rc sstr_trunc(
             dst_str->len = sstr_len;
             dst_str->chars[sstr_len] = '\0';
 
-            return SSTR_PASS;
+            sstr_status = SSTR_PASS;
         }
     }
 
-    return SSTR_FAIL;
+    return sstr_status;
 }
 
 
@@ -286,15 +295,17 @@ sstr_rc sstr_clear(
     sstring *dst_str
 )
 {
+    sstr_rc sstr_status = SSTR_FAIL;
+
     if (dst_str != NULL)
     {
         dst_str->len = 0;
         dst_str->chars[0] = '\0';
 
-        return SSTR_PASS;
+        sstr_status = SSTR_PASS;
     }
 
-    return SSTR_FAIL;
+    return sstr_status;
 }
 
 
@@ -305,23 +316,23 @@ sstr_rc sstr_wipe(
     sstring *dst_str
 )
 {
-    register sstr_pos sstr_idx;
+    sstr_rc sstr_status = SSTR_FAIL;
 
     if (dst_str != NULL)
     {
-        /* the real capacity of a secureString is cap + 1
-         * (one character reserved for a trailing null character)
-         * so the 'sstr_idx <= dst_str->cap' is correct and safe */
-        for (sstr_idx = 0; sstr_idx <= dst_str->cap; ++sstr_idx)
+        // the real capacity of a secureString is cap + 1
+        // (one character reserved for a trailing null character)
+        // so the 'sstr_idx <= dst_str->cap' is correct and safe
+        for (sstr_pos sstr_idx = 0; sstr_idx <= dst_str->cap; ++sstr_idx)
         {
             dst_str->chars[sstr_idx] = '\0';
         }
         dst_str->len = 0;
 
-        return SSTR_PASS;
+        sstr_status = SSTR_PASS;
     }
 
-    return SSTR_FAIL;
+    return sstr_status;
 }
 
 
@@ -333,10 +344,11 @@ sstr_rc sstr_swap(
     sstring *swap2nd
 )
 {
-    sstring swaptmp;
+    sstr_rc sstr_status = SSTR_FAIL;
 
     if (swap1st != NULL && swap2nd != NULL)
     {
+        sstring swaptmp;
         swaptmp.cap    = swap1st->cap;
         swaptmp.len    = swap1st->len;
         swaptmp.chars  = swap1st->chars;
@@ -349,10 +361,10 @@ sstr_rc sstr_swap(
         swap2nd->len   = swaptmp.len;
         swap2nd->chars = swaptmp.chars;
 
-        return SSTR_PASS;
+        sstr_status = SSTR_PASS;
     }
 
-    return SSTR_FAIL;
+    return sstr_status;
 }
 
 
@@ -365,17 +377,18 @@ sstr_rc sstr_getchar(
     sstr_pos      sstr_idx
 )
 {
+    sstr_rc sstr_status = SSTR_FAIL;
+
     if (src_str != NULL && dst_char != NULL)
     {
         if (sstr_idx < src_str->len)
         {
             (*dst_char) = src_str->chars[sstr_idx];
-
-            return SSTR_PASS;
+            sstr_status = SSTR_PASS;
         }
     }
 
-    return SSTR_FAIL;
+    return sstr_status;
 }
 
 
@@ -388,17 +401,18 @@ sstr_rc sstr_setchar(
     sstr_pos sstr_idx
 )
 {
+    sstr_rc sstr_status = SSTR_FAIL;
+
     if (dst_str != NULL)
     {
         if (sstr_idx < dst_str->len)
         {
             dst_str->chars[sstr_idx] = src_char;
-
-            return SSTR_PASS;
+            sstr_status = SSTR_PASS;
         }
     }
 
-    return SSTR_FAIL;
+    return sstr_status;
 }
 
 
@@ -410,27 +424,35 @@ sstr_rc sstr_cmp(
     const sstring *pat_str
 )
 {
-    register sstr_pos sstr_idx;
+    sstr_rc sstr_status = SSTR_FAIL;
 
     if (src_str != NULL && pat_str != NULL)
     {
         if (src_str->len == pat_str->len)
         {
-            for (sstr_idx = 0; sstr_idx < src_str->len; ++sstr_idx)
+            sstr_pos sstr_idx = 0;
+            while (sstr_idx < src_str->len &&
+                   src_str->chars[sstr_idx] == pat_str->chars[sstr_idx])
             {
-                if (src_str->chars[sstr_idx] != pat_str->chars[sstr_idx])
-                {
-                    return SSTR_FALSE;
-                }
+                ++sstr_idx;
             }
 
-            return SSTR_TRUE;
+            if (sstr_idx == src_str->len)
+            {
+                sstr_status = SSTR_TRUE;
+            }
+            else
+            {
+                sstr_status = SSTR_FALSE;
+            }
         }
-
-        return SSTR_FALSE;
+        else
+        {
+            sstr_status = SSTR_FALSE;
+        }
     }
 
-    return SSTR_FAIL;
+    return sstr_status;
 }
 
 
@@ -442,27 +464,35 @@ sstr_rc sstr_startswith(
     const sstring *pat_str
 )
 {
-    register sstr_pos sstr_idx;
+    sstr_rc sstr_status = SSTR_FAIL;
 
     if (src_str != NULL && pat_str != NULL)
     {
         if (src_str->len >= pat_str->len)
         {
-            for (sstr_idx = 0; sstr_idx < pat_str->len; ++sstr_idx)
+            sstr_pos sstr_idx = 0;
+            while (sstr_idx < pat_str->len &&
+                   src_str->chars[sstr_idx] == pat_str->chars[sstr_idx])
             {
-                if (src_str->chars[sstr_idx] != pat_str->chars[sstr_idx])
-                {
-                    return SSTR_FALSE;
-                }
+                ++sstr_idx;
             }
 
-            return SSTR_TRUE;
+            if (sstr_idx == pat_str->len)
+            {
+                sstr_status = SSTR_TRUE;
+            }
+            else
+            {
+                sstr_status = SSTR_FALSE;
+            }
         }
-
-        return SSTR_FALSE;
+        else
+        {
+            sstr_status = SSTR_FALSE;
+        }
     }
 
-    return SSTR_FAIL;
+    return sstr_status;
 }
 
 
@@ -474,34 +504,37 @@ sstr_rc sstr_endswith(
     const sstring *pat_str
 )
 {
-    register sstr_pos src_idx;
-    register sstr_pos pat_idx;
+    sstr_rc sstr_status = SSTR_FAIL;
 
     if (src_str != NULL && pat_str != NULL)
     {
         if (src_str->len >= pat_str->len)
         {
-            src_idx = src_str->len;
-            pat_idx = pat_str->len;
-
-            while (pat_idx > 0)
+            sstr_pos src_idx = src_str->len - pat_str->len;
+            sstr_pos pat_idx = 0;
+            while (pat_idx < pat_str->len &&
+                   src_str->chars[src_idx] == pat_str->chars[pat_idx])
             {
-                --pat_idx;
-                --src_idx;
-
-                if (src_str->chars[src_idx] != pat_str->chars[pat_idx])
-                {
-                    return SSTR_FALSE;
-                }
+                ++src_idx;
+                ++pat_idx;
             }
 
-            return SSTR_TRUE;
+            if (pat_idx == pat_str->len)
+            {
+                sstr_status = SSTR_TRUE;
+            }
+            else
+            {
+                sstr_status = SSTR_FALSE;
+            }
         }
-
-        return SSTR_FALSE;
+        else
+        {
+            sstr_status = SSTR_FALSE;
+        }
     }
 
-    return SSTR_FAIL;
+    return sstr_status;
 }
 
 
@@ -515,36 +548,35 @@ sstr_rc sstr_substr(
     size_t   substr_len
 )
 {
-    register sstr_pos src_idx;
-    register sstr_pos dst_idx;
+    sstr_rc sstr_status = SSTR_FAIL;
 
     if (src_str != NULL && dst_str != NULL)
     {
-        if (
-            src_str->len >= start_pos
-            && ((src_str->len - start_pos) >= substr_len)
-            && dst_str->cap >= substr_len
-        )
+        if (src_str->len >= start_pos &&
+            (src_str->len - start_pos) >= substr_len &&
+            dst_str->cap >= substr_len)
         {
-            for (
-                src_idx = start_pos, dst_idx = 0;
-                dst_idx < substr_len;
-                ++src_idx, ++dst_idx
-            )
             {
-                dst_str->chars[dst_idx] = src_str->chars[src_idx];
+                sstr_pos src_idx = start_pos;
+                sstr_pos dst_idx = 0;
+                while (dst_idx < substr_len)
+                {
+                    dst_str->chars[dst_idx] = src_str->chars[src_idx];
+                    ++src_idx;
+                    ++dst_idx;
+                }
             }
 
-            /* update destination secureString length */
+            // update destination secureString length
             dst_str->len =  substr_len;
-            /* terminate destination secureString with a null-character */
+            // terminate destination secureString with a null-character
             dst_str->chars[dst_str->len] = '\0';
 
-            return SSTR_PASS;
+            sstr_status = SSTR_PASS;
         }
     }
 
-    return SSTR_FAIL;
+    return sstr_status;
 }
 
 
@@ -558,36 +590,37 @@ sstr_rc sstr_appdsubstr(
     size_t   substr_len
 )
 {
-    register sstr_pos src_idx;
-    register sstr_pos dst_idx;
+    sstr_rc sstr_status = SSTR_FAIL;
 
     if (src_str != NULL && dst_str != NULL)
     {
-        if (
-            src_str->len >= start_pos
-            && ((src_str->len - start_pos) >= substr_len)
-            && dst_str->cap - dst_str->len >= substr_len
-        )
+        if (src_str->len >= start_pos &&
+            (src_str->len - start_pos) >= substr_len &&
+            dst_str->cap - dst_str->len >= substr_len)
         {
-            for (
-                src_idx = start_pos, dst_idx = dst_str->len;
-                dst_idx < dst_str->len + substr_len;
-                ++src_idx, ++dst_idx
-            )
+            sstr_pos final_len = dst_str->len + substr_len;
+
             {
-                dst_str->chars[dst_idx] = src_str->chars[src_idx];
+                sstr_pos src_idx = start_pos;
+                sstr_pos dst_idx = dst_str->len;
+                while (dst_idx < final_len)
+                {
+                    dst_str->chars[dst_idx] = src_str->chars[src_idx];
+                    ++src_idx;
+                    ++dst_idx;
+                }
             }
 
-            /* update destination secureString length */
-            dst_str->len += substr_len;
-            /* terminate destination secureString with a null-character */
+            // update destination secureString length
+            dst_str->len = final_len;
+            // terminate destination secureString with a null-character
             dst_str->chars[dst_str->len] = '\0';
 
-            return SSTR_PASS;
+            sstr_status = SSTR_PASS;
         }
     }
 
-    return SSTR_FAIL;
+    return sstr_status;
 }
 
 
@@ -599,54 +632,48 @@ sstr_pos sstr_indexof(
     const sstring *pat_str
 )
 {
-    register sstr_pos src_idx;
-    register sstr_pos src_off;
-    register sstr_pos pat_idx;
+    sstr_pos sstr_index = SSTR_NPOS;
 
     if (src_str != NULL && pat_str != NULL)
     {
         if (src_str->len >= pat_str->len)
         {
-            /* the first byte of a string with a length of zero is not valid
-             * the empty string always matches at position zero of the
-             * source string */
-            if (pat_str->len == 0)
+            // the first byte of a string with a length of zero is not valid
+            // the empty string always matches at position zero of the
+            // source string
+            if (pat_str->len > 0)
             {
-                return 0;
-            }
-
-            for (src_idx = 0; src_idx <= (src_str->len - pat_str->len); ++src_idx)
-            {
-                /* compare first character of both strings */
-                if (src_str->chars[src_idx] == pat_str->chars[0])
+                sstr_pos search_len = src_str->len - pat_str->len;
+                for (sstr_pos src_idx = 0;
+                     src_idx <= search_len && sstr_index == SSTR_NPOS;
+                     ++src_idx)
                 {
-                    /* first character matches, compare strings */
-                    src_off = src_idx + 1;
-                    pat_idx = 1;
-
-                    while (src_off < src_str->len && pat_idx < pat_str->len)
+                    // compare first character of both strings
+                    if (src_str->chars[src_idx] == pat_str->chars[0])
                     {
-                        if (!(src_str->chars[src_off] == pat_str->chars[pat_idx]))
-                        {
-                            /* set pat_idx to 0 to indicate that the strings *
-                             * did not match */
-                            pat_idx = 0;
-                            break;
-                        }
-                        else
+                        /* first character matches, compare strings */
+                        sstr_pos src_off = src_idx + 1;
+                        sstr_pos pat_idx = 1;
+
+                        while (pat_idx < pat_str->len &&
+                               src_str->chars[src_off] == pat_str->chars[pat_idx])
                         {
                             ++src_off;
                             ++pat_idx;
                         }
-                    }
-                    if (pat_idx != 0)
-                    {
-                        return src_idx;
+                        if (pat_idx == pat_str->len)
+                        {
+                            sstr_index = src_idx;
+                        }
                     }
                 }
+            }
+            else
+            {
+                sstr_index = 0;
             }
         }
     }
 
-    return SSTR_NPOS;
+    return sstr_index;
 }

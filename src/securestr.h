@@ -1,6 +1,6 @@
 /**
  * secureStrings library
- * version 0.53-beta (2014-08-27_001)
+ * version 0.54-beta (2014-10-25_001)
  *
  * Copyright (C) 2010, 2014 Robert ALTNOEDER
  *
@@ -35,41 +35,35 @@
 #include <sys/types.h>
 #include <stdlib.h>
 
-/**
- * MAXIMUM CAPACITY
- *
- * The maximum capacity (size) of any char array allocated by
- * the secureStrings library never exceeds the maximum datatype value
- * of size_t minus 127
- *
- * The upper 127 values are reserved for status codes
- *
- * size_t is a system datatype. size_t MUST be unsigned.
- */
+
+// MAXIMUM CAPACITY
+//
+// The maximum capacity (size) of any char array allocated by
+// the secureStrings library never exceeds the maximum datatype value
+// of size_t minus 127
+//
+// The upper 127 values are reserved for status codes
+//
+// size_t is a system datatype. size_t MUST be unsigned.
 #ifdef SIZE_MAX
     #define SSTR_SIZE_T_MAX ((~((size_t) 0)) < SIZE_MAX ? (~((size_t) 0)) : SIZE_MAX)
 #else
     #define SSTR_SIZE_T_MAX (~((size_t) 0))
 #endif /* SIZE_MAX */
 
-/**
- * SSTR_RCAP_MAX is the maximum number of char elements in an array
- */
+// SSTR_RCAP_MAX is the maximum number of char elements in an array
 #define SSTR_RCAP_MAX ((size_t) ((SSTR_SIZE_T_MAX - 127) < SSTR_SIZE_T_MAX ? \
-    (SSTR_SIZE_T_MAX - 127) : SSTR_SIZE_T_MAX))
+        (SSTR_SIZE_T_MAX - 127) : SSTR_SIZE_T_MAX))
 
-/**
- * SSTR_CAP_MAX is the maximum number of char elements
- * that can be used for string processing
- *
- * SSTR_CAP_MAX is (SSTR_RCAP_MAX - 1)
- */
+
+// SSTR_CAP_MAX is the maximum number of char elements
+// that can be used for string processing
+//
+// SSTR_CAP_MAX is (SSTR_RCAP_MAX - 1)
 #define SSTR_CAP_MAX ((size_t) (SSTR_RCAP_MAX - 1))
 
-/**
- * Define sstr_pos (position type), which is used to identify the
- * position of a character inside a secureString
- */
+// Define sstr_pos (position type), which is used to identify the
+// position of a character inside a secureString
 typedef size_t sstr_pos;
 
 typedef struct sstr_struct
@@ -80,20 +74,21 @@ typedef struct sstr_struct
 }
 sstring;
 
-/**
- * datatype for return values of secureStrings functions
- */
+// datatype for return values of secureStrings functions
 typedef unsigned int sstr_rc;
 
-/* valid values of the sstr_rc datatype */
+// valid values of the sstr_rc datatype
 extern const sstr_rc SSTR_PASS;
 extern const sstr_rc SSTR_FAIL;
 extern const sstr_rc SSTR_FALSE;
 extern const sstr_rc SSTR_TRUE;
 
-/* SSTR_NPOS is the value returned to indicate
- * an invalid position in an array */
+// SSTR_NPOS is the value returned to indicate
+// an invalid position in an array
 extern const sstr_pos SSTR_NPOS;
+
+// SSTR_SIZE_FAIL is the value returned to indicate an invalid size
+extern const size_t   SSTR_SIZE_FAIL;
 
 
 #ifndef _SSTR_NO_DYNMEM
